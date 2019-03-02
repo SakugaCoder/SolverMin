@@ -1,0 +1,209 @@
+*{
+	padding:0;
+	margin:0;
+	box-sizing:border-box;
+	font-family:"Segoe UI",sans-serif;
+	color:#000;
+}
+
+*:focus{
+	outline:0px;
+}
+
+body{
+	background-color:#fff;
+}
+
+.container{
+	background-color:#fff;
+	width:100%;
+	margin:auto;
+	min-height:600px;
+	margin-top:20px;
+}
+
+.container .header h2{
+	text-align:center;
+	font-size:36px;
+	font-weight:normal;
+}
+.mainOption{
+	display:block;
+	max-width:700px;
+	width: 100%;
+	margin:auto;
+	margin-top:40px;
+	overflow:hidden;
+}
+
+.mainOption .model{
+	border-bottom: 0;
+}
+.mainOption button{
+	max-width: 150px;
+	width: 100%;
+}
+
+.mainOption h3{
+	text-align:center;
+}
+
+.method,.model{
+	display: block;
+	max-width: 400px;
+	width: 100%;
+	margin:auto;
+	border: solid 0.5px rgba(0,0,0,0.4);
+	padding: 10px;
+	overflow: hidden;
+	margin-bottom: 0;
+}
+
+
+.mainOption .method button,
+.mainOption .model button{
+	border:solid 1px #707070;
+	font-size:24px;
+	color:#656988;
+	padding:20px 30px;
+	border-radius:50px;
+}
+
+.mainOption .method button:hover,
+.mainOption .model button:hover{
+	cursor:pointer;
+}
+
+.mainOption .method #option_max,
+.mainOption .model #option_t{
+	display:inline-block;
+	background:#fff;
+	color:#656988;
+	float:right;
+}
+
+.mainOption .method #option_min,
+.mainOption .model #option_s{
+	display:inline-block;
+	background:#6CA4E5;
+	color:#E8EAF3;
+	border-color:#6CA4E5;
+	float:left;
+}
+
+.mainOption .colsRows{
+	display: block;
+	max-width: 300px;
+	width: 100%;
+	margin:auto;
+	overflow: hidden;
+	margin-top: 20px;
+}
+
+.mainOption .colsRows label{
+	font-size:18px;
+}
+
+.mainOption .colsRows input[type="number"]
+{
+	border-radius:30px;
+	padding:5px;
+	border:solid 1px #707070;
+	font-size:20px;
+	max-width:150px;
+	text-align:center;
+}
+
+.mainOption .colsRows input[type="number"]:invalid{
+	border:solid 1px #707070;
+}
+
+.mainOption .colsRows .rows{
+	display:block;
+	width:100%;
+	margin-bottom:20px;
+}
+
+#btnGo{
+	display:block;
+	padding:5px 10px;
+	border:solid 1px #707070;
+	background:#fff;
+	font-size:20px;
+	margin:40px auto;
+}
+
+
+#mainContent{
+	display:none;
+	margin:0px 20px;
+	border:solid 1px #707070;
+	padding:5px;
+}
+
+#mainContent input[type="number"]
+,#mainContent input[type="text"]{
+	width:60px;
+	height:55px;
+	background:#fff;
+	color:#000;
+	margin:0px 5px 5px 0px;
+	font-size:26px;
+	border:1px solid #6CA4E5;
+	text-align:center;
+}
+
+#results{
+	display:block;
+	max-width:400px;
+	width:100%;
+	margin:auto;
+	border:solid 1px #6CA4E5;
+	padding:10px;
+	display:none;
+}
+
+#results >p{
+	text-align:center;
+	display:inline-block;
+}
+
+#results b{
+	color:#6CA4E5;
+}
+#btnSolve{
+	display:none;
+	padding:5px 10px;
+	border:solid 1px #707070;
+	background:#fff;
+	font-size:20px;
+	margin:40px auto;
+}
+
+#btnSolve:hover,#btnGo:hover{cursor:pointer;}
+
+@media (max-width:340px){
+	.mainOption button{
+		max-width: 100%;
+		width:100%;
+		display:block;
+		margin:auto;
+		margin-bottom:10px;
+	}
+	
+	.container{
+		width:600px;
+	}
+
+	#mainContent{
+		overflow:hidden;
+	}
+
+	#mainContent input[type="number"],
+	#mainContent input[type="text"]{
+		font-size:14px;
+		width:45px;
+		height:30px;
+	}
+}
+
