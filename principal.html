@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="estilos.css">
+	<title>Solver</title>
+</head> 
+<body>
+	<div class="container">
+		<div class="header">
+			<h2>Solver</h2>
+		</div>
+		<div class="mainOption">
+			
+			<div class="model">
+				<h3>Model</h3>
+				<button name="option_t" id="option_t">Trans</button>
+				<button name="option_s" id="option_s">Simple</button>
+			</div>
+			<div class="method">
+					<h3>Method</h3>
+				<button name="option_max" id="option_max">Maximo</button>
+				<button name="option_min" id="option_min">Minimo</button>
+			</div>
+
+			<div class="colsRows">
+				<div class="rows">
+					<label for="rows">Filas &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+					<input type="number" name="rows" id="rows" value ="">
+				</div>
+				<div class="cols">
+					<label for="cols">Columnas </label>
+					<input type="number" name="cols" id="cols" max="3" value="">
+				</div>
+			</div>
+		</div>
+		<button id="btnGo">Iniciar</button>
+	<div id="mainContent"></div>
+	<button id="btnSolve">Solve</button>
+	<div id="results"></div>
+	</div>
+	<script src="jspdf.min.js"></script>
+	<script src="script.js"></script>
+</body>
+</html>
