@@ -24,6 +24,7 @@
 
 	var content = "";
 	var mat_values = new Array(90);
+	var org_mat_values = new Array(90);
 	var gc = 0;
 	var definedResult = false;
 
@@ -31,14 +32,17 @@
 	var err = document.getElementById("errors");
 
 	var res_val = 0;
-
 	/*
 	document.getElementById("rows").value = 3;
 	document.getElementById("cols").value = 4;
 	*/
-	
+
 	for(c = 0; c < mat_values.length; c++){
 		mat_values[c] = new Array(90);
+	}
+
+	for(c = 0; c < org_mat_values.length; c++){
+		org_mat_values[c] = new Array(90);
 	}
 	
 	for(c = 0; c < mat_values.length; c++){
@@ -228,7 +232,8 @@
 					}
 				}
 
-				/*var mat_test_values = 
+				/*
+				var mat_test_values = 
 				[
 				5, 2, 4, 3, 22,
 				4, 8, 1, 6,	15,
@@ -243,7 +248,8 @@
 						document.getElementById("r"+i+"c"+c).value = mat_test_values[con];
 						con++;
 					}
-				}*/
+				}
+				*/
 
 				document.getElementById("r"+tr+"c"+tc).value = null;
 
@@ -271,6 +277,22 @@
 					console.log("Changing color...");
 				}
 			}
+			if(gc == 0){
+				gc++;
+				c1 = 0, c2 = 0;
+				for(r = 1; r <= totalRows; r++){
+					for(c = 1; c <= totalCols; c++){
+						org_mat_values[c1][c2] = document.getElementById("r"+r+"c"+c).value;
+						c2++;
+					}
+					c2 = 0;
+					c1++;
+				}
+			}
+
+
+			console.log("Original matrix:");
+			console.log(org_mat_values);
 						
 			console.log("Btn solve pressed");
 			console.log("Starting sovler...");
@@ -312,6 +334,18 @@
 							c1++;
 						}
 						gc++;
+						c1 = 0, c2 = 0;
+						for(r = 1; r <= tr; r++){
+							for(c = 1; c <= tc; c++){
+								org_mat_values[c1][c2] = document.getElementById("r"+r+"c"+c).value;
+								c2++;
+							}
+							c2 = 0;
+							c1++;
+						}
+
+						console.log("Original matrix:");
+						console.log(org_mat_values);
 					}
 					
 					//Create matrix for cols and rows status respectively
@@ -402,7 +436,7 @@
 					}*/
 		
 					//else if(carry == 0){
-						console.log("No carry");
+						//console.log("No carry");
 						if(  (Number(demand) - Number(supply)) > 0){
 							truckloads = supply;
 							new_demand = Number(demand) - Number(supply);
@@ -647,26 +681,45 @@
 		doc.text("Method: ",10,95);
 		doc.setTextColor(12,56,67);
 		doc.text(""+method,33,95);
-
+		doc.setTextColor(12,56,67);	
+		doc.text('Original values: ',10,110);
 		console.log("Model: "+model);
 		console.log("Method: "+method);
-
-		startY = 115;
+		
+		startY = 125;
 		startX = 10;
 
 		if(model == "simple"){
 			console.log("Generating pdf in simple mode");
 			for(i = 0; i< totalRows; i++){
+				//Pringing original matrix
+				for(c = 0; c < totalCols; c++){
+					doc.setTextColor(0,0,0);
+					doc.text(""+org_mat_values[i][c],startX,startY);
+					startX += 20;
+					console.log(document.getElementById("r"+(i+1)+"c"+(c+1)).value);
+
+				}
+				startY += 20;
+				startX = 10;
+			}
+			startY += 10;
+			doc.setTextColor(12,56,67);
+			doc.addPage();
+			startY = 20;
+			doc.text('Results: ',10,startY);
+			startY += 15;
+			for(i = 0; i< totalRows; i++){
 				for(c = 0; c < totalCols; c++){
 					if(document.getElementById("r"+(i+1)+"c"+(c+1)).style.background == "rgb(108, 164, 229)"){
 						console.log("Correct result");
 						doc.setTextColor(139, 92, 221);
-                        doc.text(""+document.getElementById("r"+(i+1)+"c"+(c+1)).value,startX,startY);
+						doc.text(""+document.getElementById("r"+(i+1)+"c"+(c+1)).value,startX,startY);
 					}
 					else{
 						console.log("Normal result");
 						doc.setTextColor(0, 0 ,0);
-                        doc.text(""+document.getElementById("r"+(i+1)+"c"+(c+1)).value,startX,startY);
+						doc.text(""+document.getElementById("r"+(i+1)+"c"+(c+1)).value,startX,startY);
 					}
 					startX += 20;
 					console.log(document.getElementById("r"+(i+1)+"c"+(c+1)).value);
@@ -686,6 +739,28 @@
 		}
 		else{
 			console.log("Generating pdf in the hardest mode");
+			//
+			doc.setTextColor(12,56,67);	
+			doc.text('Original values: ',10,110);
+			for(i = 0; i< tr; i++){
+				//Pringing original matrix
+				for(c = 0; c < tc; c++){
+					doc.setTextColor(0,0,0);
+					doc.text(""+org_mat_values[i][c],startX,startY);
+					startX += 20;
+					console.log(document.getElementById("r"+(i+1)+"c"+(c+1)).value);
+
+				}
+				startY += 20;
+				startX = 10;
+			}
+			startY += 10;
+			doc.setTextColor(12,56,67);
+			doc.addPage();
+			startY = 20;
+			doc.text('Results: ',10,startY);
+			startY += 15;
+			//
 			c1 = 0; c2 = 0;
 			for(r = 1; r <= tr; r++){
 				for(c = 1; c <= tc; c++){
