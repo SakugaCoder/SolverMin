@@ -2,7 +2,7 @@
 	console.log("Start");
 
 	var method = "min";
-	var model = "simple";
+	var model = "transport";
 	var btnOptionMax = document.getElementById("option_max");
 	var btnOptionMin = document.getElementById("option_min");
 	var btnOptionT = document.getElementById("option_t");
@@ -30,6 +30,8 @@
 	var res = document.getElementById("results");
 	var res_val = 0;
 
+	document.getElementById("rows").value = 3;
+	document.getElementById("cols").value = 4;
 
 	for(c = 0; c < mat_values.length; c++){
 		mat_values[c] = new Array(90);
@@ -41,9 +43,21 @@
 		}
 	}
 
+	var mat_dem = new Array(90);
+	var mat_sup = new Array(90);
+
+	for(c1 = 0; c1 < mat_dem.length; c1++){
+		mat_dem[c1] = {pos:c1,status:true};
+	}
+
+	for(c2 = 0; c2 < mat_sup.length; c2++){
+		mat_sup[c2] = {pos:c2,status:true};
+	}
+
 	console.log(mat_values);
 
 	var transportMatrixIsFill = false;
+	var last_supply_position;
 
 	btnOptionT.addEventListener("click",function(){
 		console.log("Btn transport pressed");
@@ -198,10 +212,10 @@
 
 				var mat_test_values = 
 				[
-				464, 513, 654, 75,
-				352, 216, 690, 125,
-				995, 682, 388, 100,
-				105, 85, 110, 0];
+				5, 2, 4, 3, 22,
+				4, 8, 1, 6,	15,
+				4, 6, 7, 5,	8,
+				7, 12, 17, 9, 0];
 				
 				var con = 0;
 				console.log("Starting to fight");
@@ -213,7 +227,7 @@
 					}
 				}
 
-				document.getElementById("r5c5").value = null;
+				document.getElementById("r"+tr+"c"+tc).value = null;
 
 				console.log(mat_test_values);
 
@@ -247,199 +261,284 @@
 		}
 
 		else{
-			while(definedResult == false){
-				if(gc == 0){
-					var c1 = 0, c2 = 0;
-					for(r = 1; r < tr-1; r++){
-						for(c = 1; c < tc-1; c++){
-							console.log("r"+r+"c"+c);
-							mat_values[c1][c2] = {num:document.getElementById("r"+(r+1)+"c"+(c+1)).value,
-							state:false,trockloads:0};
-							c2++;
-						}
-						c2=0;
-						c1++;
-					}
-					gc++;
-				}
-				//Create a matrix for all the values
-				console.log("You are in the hardest model");
-				//Fin all small number in each row
-				var posible_numbers = new Array(tc-2);
-				for(c = 0; c < posible_numbers.length; c++){
-					posible_numbers[c] = {n:null,y:0,x:0};
-				}
-				var actual_number = {n:0,y:0,x:0};
-				var r=0,c=0;
-				for(r = 0; r < tr-2; r++){
-					//Finding an number whitout use
-					for(m = 0; m < totalRows; m++){
-						for(l = 0; l < totalCols; l++){
-							console.log("Voy por: r:"+m+" l:"+l+" state:"+mat_values[m][l].state);
-							if(mat_values[m][l].state == false){
-								actual_number = {n:(mat_values[m][l]).num,y:m,x:l};
-								console.log("The correct first number is:"+actual_number.n);
-								break;
+			//Check the total supply and demand
+			var sameSD = true;
+			var totalSupply = 0;
+			var totalDemand = 0;
+			//Check Supply
+			
+			for(r = 2; r < tr; r++){
+				totalSupply += Number(document.getElementById("r"+r+"c"+tc).value);
+			}
+
+			for(c = 2; c < tc; c++){
+				totalDemand += Number(document.getElementById("r"+tr+"c"+c).value);
+			}
+
+			console.log("Total supply are"+totalSupply);
+			console.log("Total demand: "+totalDemand);
+			if(totalDemand == totalSupply){
+				while(definedResult == false){
+					//Filling the matrix "mat_values" with all the current values from inputs
+					if(gc == 0){
+						var c1 = 0, c2 = 0;
+						for(r = 1; r < tr-1; r++){
+							for(c = 1; c < tc-1; c++){
+								console.log("r"+r+"c"+c);
+								mat_values[c1][c2] = {num:document.getElementById("r"+(r+1)+"c"+(c+1)).value,
+								state:false,trockloads:0};
+								c2++;
 							}
+							c2=0;
+							c1++;
 						}
+						gc++;
 					}
 					
-					for(c = 0; c < tc-2; c++){
-						if( (Number(actual_number.n) > Number(mat_values[r][c].num)) && mat_values[r][c].state == false){
-							actual_number = {n:mat_values[r][c].num,y:r,x:c};
-						}
+					//Create matrix for cols and rows status respectively
 	
-						if(mat_values[r][c].state != false){
-							console.log("The number : "+mat_values[r][c].num+" has been used");
+					//Find the nothwest field
+					var c1 = 0, c2 = 0,r = 2;
+					var northestNumberFinded = false;
+					var number = {n:0,y:0,x:0};
+	
+					while(r < tr && northestNumberFinded == false){
+						if(mat_sup[c1].status == false){
+							console.log("El suministro "+(r-1)+" esta vacio");
+						}
+						else{
+							for(c = 2; c < tc; c++){
+								console.log("r"+r+"c"+c);
+								if(mat_dem[c2].status == false){
+									console.log("La demanda "+(c-1)+" esta vacia");
+								}
+								else{
+									console.log("Northwest value finded: ");
+									number = {n:document.getElementById('r'+r+'c'+c).value,y:r,x:c};
+									mat_values[c1][c2].state = true;
+									console.log(number.n);
+									northestNumberFinded = true;
+									break;
+								}
+								c2++;
+							}
+							c2 = 0;
+						}
+						c1++;
+						r++;
+						if(northestNumberFinded){
+							break;
 						}
 					}
-					posible_numbers[r] = {n:actual_number.n,y:actual_number.y,x:actual_number.x};
-				}
-				console.log("Small numbers of each row are: ");
-				
-				posible_numbers.forEach(function(data){
-					console.log(data.n);
-				});
-				//Find the smallest number of all the matrix and verify that they are not used
-				var number = {n:posible_numbers[0].n,y:posible_numbers[0].y,x:posible_numbers[0].x};
-				for(i = 1; i < tr-2; i++){
-					console.log("Comparing: "+number.n+" Whit: "+posible_numbers[i].n);
-					if( (Number(number.n) > Number(posible_numbers[i].n) && Number(number.n) > 0)){
-						number = {n:posible_numbers[i].n,y:posible_numbers[i].y,x:posible_numbers[i].x};
-						console.log("The new number is: "+number.n);
+	
+					console.log("The northwest number is:"+number.n);
+					//console.log("The row is: "+number.y);
+					//console.log("The col is: "+number.x);
+	
+	
+					document.getElementById("r"+(Number(number.y))+"c"+(Number(number.x))).style.background = "red";
+					//mat_values[Number(number.y)][Number(number.x)].state = true;
+					//console.log(mat_values);
+		
+					//Rest the demand from this destination to the correspinding supply
+		
+					console.log("The coord for the number finded are:\nx:"+number.x+"\ny:"+number.y);
+					var demand = document.getElementById("r"+(tr)+"c"+(number.x)).value;
+					var supply = document.getElementById("r"+(number.y)+"c"+(tc)).value;
+					console.log("The demand for this point is: "+demand);
+					console.log("The supply for this point is: "+supply);
+		
+					var truckloads = 0;
+					var new_supply = 0;
+					var new_damand = 0;
+					/*
+					if(carry > 0){
+						console.log("Are you carring")
+						if(  (Number(demand) - carry) > 0){
+							truckloads = carry;
+							new_demand = Number(demand) - carry;
+							new_supply = 0;
+							carry = 0;
+							document.getElementById(last_supply_position).value = 0;
+							console.log("The demand is biggern than carry: ");
+						}
+			
+						else if( (Number(demand) - carry) == 0){
+							truckloads = carry;
+							new_demand = 0;
+							new_supply = 0;
+							document.getElementById(last_supply_position).value = 0;
+							console.log("Demand min carry equals 0");
+						}
+			
+						else if( (Number(demand) - carry) < 0){
+							truckloads = demand;
+							new_demand = 0;
+							new_supply = supply;
+							carry =  carry - Number(supply);
+							document.getElementById(last_supply_position).value = (carry - Number(demand));
+							console.log("Demand min carry under 0");
+							console.log("You are carring: "+carry);
+						}
+					}*/
+		
+					//else if(carry == 0){
+						console.log("No carry");
+						if(  (Number(demand) - Number(supply)) > 0){
+							truckloads = supply;
+							new_demand = Number(demand) - Number(supply);
+							new_supply = 0;
+							console.log("Demand min suply");
+						}
+			
+						else if( (Number(demand) - Number(supply)) == 0){
+							truckloads = supply;
+							new_demand = 0;
+							new_supply = 0;
+							console.log("Demand min supply equals 0");
+						}
+			
+						else if( (Number(demand) - Number(supply)) < 0){
+							truckloads = demand;
+							new_demand = 0;
+							new_supply = Number(supply) - Number(demand);
+							carry = Number(supply) - Number(demand);
+							last_supply = supply;
+							console.log("Demand min supply under 0 are you carring:"+carry);
+							last_supply_position = "r"+(number.y)+"c"+(tr);
+						}
+					//}
+	
+					document.getElementById("r"+(tr)+"c"+(number.x)).value = new_demand;
+					document.getElementById("r"+(number.y)+"c"+(tc)).value = new_supply;
+					
+					if(truckloads > 0){
+						document.getElementById("r"+(number.y)+"c"+(number.x)).value = truckloads;
+						document.getElementById("r"+(number.y)+"c"+(number.x)).style.background = "#6CA4E5";
+						document.getElementById("r"+(number.y)+"c"+(number.x)).style.color = "#fff";
+					}
+		
+					else{
+						document.getElementById("r"+(number.y)+"c"+(number.x)).style.background = "#fff";
+					}
+		
+					//Verify if we have a result
+					definedResult = true;
+		
+					//Check the supply results
+					for(i = 2; i <= tr  ; i++){
+						console.log("Sup"+i+":"+Number(document.getElementById("r"+i+"c"+tc).value));
+						if(Number(document.getElementById("r"+i+"c"+tc).value) != 0){
+							definedResult = false;
+						}
+						else{
+							mat_sup[i-2].status = false;
+						}
+					}
+		
+					for(i = 2; i <= tc  ; i++){
+						console.log("Des"+i+":"+Number(document.getElementById("r"+tr+"c"+i).value));
+						if(Number(document.getElementById("r"+tr+"c"+i).value) != 0){
+							definedResult = false;
+						}
+						else{
+							mat_dem[i-2].status = false;
+						}
+					}
+					console.log("Acual status of the cols and rows:");
+					
+					console.log("Status Demand cells:");
+					console.log(mat_dem);
+					console.log("Status Supply cells:");
+					console.log(mat_sup);
+		
+					if(definedResult){
+						console.log("");
+						console.log("All is ok you have gotten the result");
+					}
+		
+					else if(definedResult == false){
+						//console.log("We haven't find the result");
 					}
 				}
 	
-				console.log("The number is: "+number.n);
-				document.getElementById("r"+(Number(number.y)+2)+"c"+(Number(number.x)+2)).style.background = "red";
-				mat_values[Number(number.y)][Number(number.x)].state = true;
 				console.log(mat_values);
 	
-				//Rest the demand from this destination to the correspinding supply
-	
-				console.log("The coord for the number finded are:\nx:"+number.x+"\ny:"+number.y);
-				var demand = document.getElementById("r"+(tc)+"c"+(number.x+2)).value;
-				var supply = document.getElementById("r"+(number.y+2)+"c"+(tr)).value;
-				console.log("The demand for this point is: "+demand);
-				console.log("The supply for this point is: "+supply);
-	
-				var truckloads = 0;
-				var new_supply = 0;
-				var new_damand = 0;
+				c1 = 0; c2 = 0;
+				for(r = 2; r < tr; r++){
+					for(c = 2; c < tc; c++){
+						if(document.getElementById("r"+r+"c"+c).style.background == "rgb(108, 164, 229)"){
+							//console.log(mat_values[c1][c2].num);
+							//console.log(document.getElementById("r"+r+"c"+c).value);
+							res_val += (Number(mat_values[c1][c2].num) * Number(document.getElementById("r"+r+"c"+c).value));
+						}
+						c2++;
+					}
+					c2=0;
+					c1++;
 				
-				if(carry > 0){
-					console.log("Are you carring")
-					if(  (Number(demand) - carry) > 0){
-						truckloads = carry;
-						new_demand = Number(demand) - carry;
-						new_supply = 0;
-						carry = 0;
-						console.log("The demand is biggern than carry: ");
+	
+					/*
+					//Create a matrix for all the values
+					console.log("You are in the hardest model");
+					//Fin all small number in each row
+					var posible_numbers = new Array(tc-2);
+					for(c = 0; c < posible_numbers.length; c++){
+						posible_numbers[c] = {n:null,y:0,x:0};
+					}
+					var actual_number = {n:0,y:0,x:0};
+					var r=0,c=0;
+					for(r = 0; r < tr-2; r++){
+						//Finding an number whitout use
+						for(m = 0; m < totalRows; m++){
+							for(l = 0; l < totalCols; l++){
+								console.log("Voy por: r:"+m+" l:"+l+" state:"+mat_values[m][l].state);
+								if(mat_values[m][l].state == false){
+									actual_number = {n:(mat_values[m][l]).num,y:m,x:l};
+									console.log("The correct first number is:"+actual_number.n);
+									break;
+								}
+							}
+						}
+						
+						for(c = 0; c < tc-2; c++){
+							if( (Number(actual_number.n) > Number(mat_values[r][c].num)) && mat_values[r][c].state == false){
+								actual_number = {n:mat_values[r][c].num,y:r,x:c};
+							}
+		
+							if(mat_values[r][c].state != false){
+								console.log("The number : "+mat_values[r][c].num+" has been used");
+							}
+						}
+						posible_numbers[r] = {n:actual_number.n,y:actual_number.y,x:actual_number.x};
+					}
+					console.log("Small numbers of each row are: ");
+					
+					posible_numbers.forEach(function(data){
+						console.log(data.n);
+					});
+					//Find the smallest number of all the matrix and verify that they are not used
+					var number = {n:posible_numbers[0].n,y:posible_numbers[0].y,x:posible_numbers[0].x};
+					for(i = 1; i < tr-2; i++){
+						console.log("Comparing: "+number.n+" Whit: "+posible_numbers[i].n);
+						if( (Number(number.n) > Number(posible_numbers[i].n) && Number(number.n) > 0)){
+							number = {n:posible_numbers[i].n,y:posible_numbers[i].y,x:posible_numbers[i].x};
+							console.log("The new number is: "+number.n);
+						}
 					}
 		
-					else if( (Number(demand) - carry) == 0){
-						truckloads = carry;
-						new_demand = 0;
-						new_supply = 0;
-						console.log("Demand min carry equals 0");
-					}
-		
-					else if( (Number(demand) - carry) < 0){
-						truckloads = demand;
-						new_demand = 0;
-						new_supply = supply;
-						carry = Number(supply) - carry;
-						console.log("Demand min carry under 0");
-					}
+					*/
 				}
-	
-				else if(carry == 0){
-					console.log("No carry");
-					if(  (Number(demand) - Number(supply)) > 0){
-						truckloads = supply;
-						new_demand = Number(demand) - Number(supply);
-						new_supply = 0;
-						console.log("Demand min suply");
-					}
-		
-					else if( (Number(demand) - Number(supply)) == 0){
-						truckloads = supply;
-						new_demand = 0;
-						new_supply = 0;
-						console.log("Demand min supply equals 0");
-					}
-		
-					else if( (Number(demand) - Number(supply)) < 0){
-						truckloads = demand;
-						new_demand = 0;
-						new_supply = Number(supply) - Number(demand);
-						carry = Number(supply) - Number(demand);
-						console.log("Demand min supply under 0 are you carring:"+carry);
-					}
-				}
-	
-				document.getElementById("r"+(tc)+"c"+(number.x+2)).value = new_demand;
-				document.getElementById("r"+(number.y+2)+"c"+(tr)).value = new_supply;
-				
-				if(truckloads > 0){
-					document.getElementById("r"+(number.y+2)+"c"+(number.x+2)).value = truckloads;
-					document.getElementById("r"+(number.y+2)+"c"+(number.x+2)).style.background = "#6CA4E5";
-					document.getElementById("r"+(number.y+2)+"c"+(number.x+2)).style.color = "#fff";
-				}
-	
-				else{
-					document.getElementById("r"+(number.y+2)+"c"+(number.x+2)).style.background = "#fff";
-				}
-	
-				//Verify if we have a result
-				definedResult = true;
-	
-				//Check the supply results
-				for(i = 2; i < tr  ; i++){
-					console.log("Sup"+i+":"+Number(document.getElementById("r"+i+"c5").value));
-					if(Number(document.getElementById("r"+i+"c5").value) != 0){
-						definedResult = false;
-					}
-				}
-	
-				for(i = 2; i < tc  ; i++){
-					console.log("Des"+i+":"+Number(document.getElementById("r5"+"c"+i).value));
-					if(Number(document.getElementById("r5"+"c"+i).value) != 0){
-						definedResult = false;
-					}
-				}
-	
-				if(definedResult){
-					console.log("");
-					console.log("All is ok you have gotten the result");
-				}
-	
-				else if(definedResult == false){
-					console.log("\nWe haven't find the result");
-				}
+				//console.log(res_val);
+				res.innerHTML = "<p>Result:</p><b>&nbsp;"+res_val+"</b>";
+				res.style.display = "block";
+				generatePDF();
 			}
 
-			console.log(mat_values);
-
-			c1 = 0; c2 = 0;
-			for(r = 2; r < tc; r++){
-				for(c = 2; c < tr; c++){
-					if(document.getElementById("r"+r+"c"+c).style.background == "rgb(108, 164, 229)"){
-						console.log(mat_values[c1][c2].num);
-						console.log(document.getElementById("r"+r+"c"+c).value);
-						res_val += (Number(mat_values[c1][c2].num) * Number(document.getElementById("r"+r+"c"+c).value));
-					}
-					c2++;
-				}
-				c2=0;
-				c1++;
+			else{
+				console.log("Demand and supply are not the same");
 			}
 		
-			console.log(res_val);
-			res.innerHTML = "<p>Result:</p><b>&nbsp;"+res_val+"</b>";
-			res.style.display = "block";
-			generatePDF();
-			
 		}
 	});
 
@@ -566,8 +665,8 @@
 		else{
 			console.log("Generating pdf in the hardest mode");
 			c1 = 0; c2 = 0;
-			for(r = 1; r <= tc; r++){
-				for(c = 1; c <= tr; c++){
+			for(r = 1; r <= tr; r++){
+				for(c = 1; c <= tc; c++){
 					if(document.getElementById("r"+r+"c"+c).style.background == "rgb(108, 164, 229)"){
 						console.log(document.getElementById("r"+r+"c"+c).value);
 						doc.setTextColor(139, 92, 221);
