@@ -28,11 +28,15 @@
 	var definedResult = false;
 
 	var res = document.getElementById("results");
+	var err = document.getElementById("errors");
+
 	var res_val = 0;
 
+	/*
 	document.getElementById("rows").value = 3;
 	document.getElementById("cols").value = 4;
-
+	*/
+	
 	for(c = 0; c < mat_values.length; c++){
 		mat_values[c] = new Array(90);
 	}
@@ -62,6 +66,8 @@
 	btnOptionT.addEventListener("click",function(){
 		console.log("Btn transport pressed");
 		model = "transport";
+		btnOptionMax.disabled = true;
+
 		this.style.background = "#6CA4E5";
 		this.style.color = "#E8EAF3";
 		this.style.border = "1px solid #6CA4E5";
@@ -70,11 +76,22 @@
 		btnOptionS.style.color = "#656988";
 		btnOptionS.style.transition = "all 0.3s";
 		btnOptionS.style.border = "1px solid #656988";
+
+		method = "min";
+		btnOptionMin.style.background = "#6CA4E5";
+		btnOptionMin.style.color = "#E8EAF3"
+		btnOptionMin.style.transition = "all 0.3s";
+		btnOptionMin.style.border = "1px solid #6CA4E5";
+		btnOptionMax.style.background = "#fff";
+		btnOptionMax.style.color = "#656988"
+		btnOptionMax.style.transition = "all 0.3s";
+		btnOptionMax.style.border = "1px solid #656988";
 	});
 
 	btnOptionS.addEventListener("click",function(){
 		console.log("Btn simple pressed");
 		model = "simple";
+		btnOptionMax.disabled = false;
 		this.style.background = "#6CA4E5";
 		this.style.color = "#E8EAF3";
 		this.style.border = "1px solid #6CA4E5";
@@ -114,6 +131,7 @@
 
 	btnGo.addEventListener('click',function(){
 		console.log("Btn go pressed");
+		res.style.display = "none";
 		totalRows = fieldRows.value;
 		totalCols = fieldCols.value;
 
@@ -210,7 +228,7 @@
 					}
 				}
 
-				var mat_test_values = 
+				/*var mat_test_values = 
 				[
 				5, 2, 4, 3, 22,
 				4, 8, 1, 6,	15,
@@ -225,7 +243,7 @@
 						document.getElementById("r"+i+"c"+c).value = mat_test_values[con];
 						con++;
 					}
-				}
+				}*/
 
 				document.getElementById("r"+tr+"c"+tc).value = null;
 
@@ -278,6 +296,7 @@
 			console.log("Total supply are"+totalSupply);
 			console.log("Total demand: "+totalDemand);
 			if(totalDemand == totalSupply){
+				err.style.display = "none";
 				while(definedResult == false){
 					//Filling the matrix "mat_values" with all the current values from inputs
 					if(gc == 0){
@@ -299,10 +318,10 @@
 	
 					//Find the nothwest field
 					var c1 = 0, c2 = 0,r = 2;
-					var northestNumberFinded = false;
+					var northwestNumberFinded = false;
 					var number = {n:0,y:0,x:0};
 	
-					while(r < tr && northestNumberFinded == false){
+					while(r < tr && northwestNumberFinded == false){
 						if(mat_sup[c1].status == false){
 							console.log("El suministro "+(r-1)+" esta vacio");
 						}
@@ -317,7 +336,7 @@
 									number = {n:document.getElementById('r'+r+'c'+c).value,y:r,x:c};
 									mat_values[c1][c2].state = true;
 									console.log(number.n);
-									northestNumberFinded = true;
+									northwestNumberFinded = true;
 									break;
 								}
 								c2++;
@@ -326,7 +345,7 @@
 						}
 						c1++;
 						r++;
-						if(northestNumberFinded){
+						if(northwestNumberFinded){
 							break;
 						}
 					}
@@ -530,6 +549,7 @@
 					*/
 				}
 				//console.log(res_val);
+				console.log(mat_values);
 				res.innerHTML = "<p>Result:</p><b>&nbsp;"+res_val+"</b>";
 				res.style.display = "block";
 				generatePDF();
@@ -537,6 +557,8 @@
 
 			else{
 				console.log("Demand and supply are not the same");
+				err.innerHTML = "<p>Error! </p><b>&nbsp;Demand and supply are not the same</b>";
+				err.style.display = "block";
 			}
 		
 		}

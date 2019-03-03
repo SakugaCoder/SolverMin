@@ -158,6 +158,7 @@ body{
 	max-width:400px;
 	width:100%;
 	margin:auto;
+	margin-bottom:20px;
 	border:solid 1px #6CA4E5;
 	padding:10px;
 	display:none;
@@ -170,6 +171,26 @@ body{
 
 #results b{
 	color:#6CA4E5;
+}
+
+#errors{
+	display:block;
+	max-width:400px;
+	width:100%;
+	margin:auto;
+	margin-bottom:20px;
+	border:solid 1px rgb(235, 108, 91);
+	padding:10px;
+	display:none;
+}
+
+#errors >p{
+	text-align:center;
+	display:inline-block;
+}
+
+#erros b{
+	color:rgb(235, 108, 91);
 }
 #btnSolve{
 	display:none;
