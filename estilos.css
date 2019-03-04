@@ -180,6 +180,7 @@ body{
 	margin:auto;
 	margin-bottom:20px;
 	border:solid 1px rgb(235, 108, 91);
+	color:rgb(235, 108, 91);
 	padding:10px;
 	display:none;
 }
@@ -189,7 +190,12 @@ body{
 	display:inline-block;
 }
 
-#erros b{
+#errors p{
+	color:rgb(235, 108, 91);
+	text-align: center;
+}
+
+#erros p b{
 	color:rgb(235, 108, 91);
 }
 #btnSolve{
